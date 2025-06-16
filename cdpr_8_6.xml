@@ -1,0 +1,116 @@
+<mujoco model="cdpr_8_cables_6_dof">
+  <compiler angle="radian"/>
+
+  <asset>
+    <texture type="2d" colorspace="auto" name="texplane" builtin="checker" mark="cross" rgb1="0.25 0.25 0.25" rgb2="0.3 0.3 0.3" markrgb="0.8 0.8 0.8" width="512" height="512"/>
+    <material name="matplane" texture="texplane" texuniform="true" reflectance="0.3"/>
+  </asset>
+
+  <worldbody>
+    <geom name="floor" size="0 0 1" type="plane" material="matplane"/>
+    <site name="proximal_anchor_0" pos="-4 4 0" size="0.1" rgba="1 0 0 1"/>
+    <site name="proximal_anchor_1" pos="4 4 0" size="0.1" rgba="1 0 0 1"/>
+    <site name="proximal_anchor_2" pos="4 -4 0" size="0.1" rgba="1 0 0 1"/>
+    <site name="proximal_anchor_3" pos="-4 -4 0" size="0.1" rgba="1 0 0 1"/>
+    <site name="proximal_anchor_4" pos="-4 4 8" size="0.1" rgba="1 0 0 1"/>
+    <site name="proximal_anchor_5" pos="4 4 8" size="0.1" rgba="1 0 0 1"/>
+    <site name="proximal_anchor_6" pos="4 -4 8" size="0.1" rgba="1 0 0 1"/>
+    <site name="proximal_anchor_7" pos="-4 -4 8" size="0.1" rgba="1 0 0 1"/>
+    <light pos="0 0 0" dir="0 0 -1" type="directional" diffuse="0.8 0.8 0.8" specular="0.2 0.2 0.2"/>
+    <body name="end_effector" pos="0 0 4">
+      <joint type="free" limited="false" actuatorfrclimited="false"/>
+      <geom size="0.25 0.25 0.25" type="box" density="10" rgba="0 0.9 0 1"/>
+      <site name="distal_anchor_0" pos="-0.25 0.25 -0.25" size="0.1" rgba="1 0 0 1"/>
+      <site name="distal_anchor_1" pos="0.25 0.25 -0.25" size="0.1" rgba="1 0 0 1"/>
+      <site name="distal_anchor_2" pos="0.25 -0.25 -0.25" size="0.1" rgba="1 0 0 1"/>
+      <site name="distal_anchor_3" pos="-0.25 -0.25 -0.25" size="0.1" rgba="1 0 0 1"/>
+      <site name="distal_anchor_4" pos="-0.25 0.25 0.25" size="0.1" rgba="1 0 0 1"/>
+      <site name="distal_anchor_5" pos="0.25 0.25 0.25" size="0.1" rgba="1 0 0 1"/>
+      <site name="distal_anchor_6" pos="0.25 -0.25 0.25" size="0.1" rgba="1 0 0 1"/>
+      <site name="distal_anchor_7" pos="-0.25 -0.25 0.25" size="0.1" rgba="1 0 0 1"/>
+    </body>
+  </worldbody>
+
+  <tendon>
+    <spatial name="cable_tendon_0" limited="true" range="0 10" damping="1" width="0.05" rgba="0 0 0.9 1">
+      <site site="distal_anchor_0"/>
+      <site site="proximal_anchor_0"/>
+    </spatial>
+    <spatial name="cable_tendon_1" limited="true" range="0 10" damping="1" width="0.05" rgba="0 0 0.9 1">
+      <site site="distal_anchor_1"/>
+      <site site="proximal_anchor_1"/>
+    </spatial>
+    <spatial name="cable_tendon_2" limited="true" range="0 10" damping="1" width="0.05" rgba="0 0 0.9 1">
+      <site site="distal_anchor_2"/>
+      <site site="proximal_anchor_2"/>
+    </spatial>
+    <spatial name="cable_tendon_3" limited="true" range="0 10" damping="1" width="0.05" rgba="0 0 0.9 1">
+      <site site="distal_anchor_3"/>
+      <site site="proximal_anchor_3"/>
+    </spatial>
+    <spatial name="cable_tendon_4" limited="true" range="0 10" damping="1" width="0.05" rgba="0 0 0.9 1">
+      <site site="distal_anchor_4"/>
+      <site site="proximal_anchor_4"/>
+    </spatial>
+    <spatial name="cable_tendon_5" limited="true" range="0 10" damping="1" width="0.05" rgba="0 0 0.9 1">
+      <site site="distal_anchor_5"/>
+      <site site="proximal_anchor_5"/>
+    </spatial>
+    <spatial name="cable_tendon_6" limited="true" range="0 10" damping="1" width="0.05" rgba="0 0 0.9 1">
+      <site site="distal_anchor_6"/>
+      <site site="proximal_anchor_6"/>
+    </spatial>
+    <spatial name="cable_tendon_7" limited="true" range="0 10" damping="1" width="0.05" rgba="0 0 0.9 1">
+      <site site="distal_anchor_7"/>
+      <site site="proximal_anchor_7"/>
+    </spatial>
+  </tendon>
+
+  <actuator>
+    <general tendon="cable_tendon_0" ctrllimited="true" ctrlrange="0 10" forcerange="-1000 0" biastype="affine" gainprm="50" biasprm="0 -50"/>
+    <general tendon="cable_tendon_1" ctrllimited="true" ctrlrange="0 10" forcerange="-1000 0" biastype="affine" gainprm="50" biasprm="0 -50"/>
+    <general tendon="cable_tendon_2" ctrllimited="true" ctrlrange="0 10" forcerange="-1000 0" biastype="affine" gainprm="50" biasprm="0 -50"/>
+    <general tendon="cable_tendon_3" ctrllimited="true" ctrlrange="0 10" forcerange="-1000 0" biastype="affine" gainprm="50" biasprm="0 -50"/>
+    <general tendon="cable_tendon_4" ctrllimited="true" ctrlrange="0 10" forcerange="-1000 0" biastype="affine" gainprm="50" biasprm="0 -50"/>
+    <general tendon="cable_tendon_5" ctrllimited="true" ctrlrange="0 10" forcerange="-1000 0" biastype="affine" gainprm="50" biasprm="0 -50"/>
+    <general tendon="cable_tendon_6" ctrllimited="true" ctrlrange="0 10" forcerange="-1000 0" biastype="affine" gainprm="50" biasprm="0 -50"/>
+    <general tendon="cable_tendon_7" ctrllimited="true" ctrlrange="0 10" forcerange="-1000 0" biastype="affine" gainprm="50" biasprm="0 -50"/>
+  </actuator>
+
+  <sensor>
+
+    <tendonpos tendon="cable_tendon_0"/>
+
+    <tendonactuatorfrc tendon="cable_tendon_0"/>
+
+    <tendonpos tendon="cable_tendon_1"/>
+
+    <tendonactuatorfrc tendon="cable_tendon_1"/>
+
+    <tendonpos tendon="cable_tendon_2"/>
+
+    <tendonactuatorfrc tendon="cable_tendon_2"/>
+
+    <tendonpos tendon="cable_tendon_3"/>
+
+    <tendonactuatorfrc tendon="cable_tendon_3"/>
+
+    <tendonpos tendon="cable_tendon_4"/>
+
+    <tendonactuatorfrc tendon="cable_tendon_4"/>
+
+    <tendonpos tendon="cable_tendon_5"/>
+
+    <tendonactuatorfrc tendon="cable_tendon_5"/>
+
+    <tendonpos tendon="cable_tendon_6"/>
+
+    <tendonactuatorfrc tendon="cable_tendon_6"/>
+
+    <tendonpos tendon="cable_tendon_7"/>
+
+    <tendonactuatorfrc tendon="cable_tendon_7"/>
+    <framepos objtype="body" objname="end_effector" name="end_effector_position"/>
+    <framequat objtype="body" objname="end_effector" name="end_effector_quaternion"/>
+  </sensor>
+</mujoco>
