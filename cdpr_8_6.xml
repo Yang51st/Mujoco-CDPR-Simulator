@@ -33,35 +33,35 @@
   </worldbody>
 
   <tendon>
-    <spatial name="cable_tendon_0" limited="true" range="0 20" actuatorfrcrange="-1000 0" stiffness="0.001" damping="1" width="0.05" rgba="0 0 0.9 1">
+    <spatial name="cable_tendon_0" limited="true" range="0 20" actuatorfrcrange="-1000 0" damping="1" width="0.05" rgba="0 0 0.9 1">
       <site site="distal_anchor_0"/>
       <site site="proximal_anchor_0"/>
     </spatial>
-    <spatial name="cable_tendon_1" limited="true" range="0 20" actuatorfrcrange="-1000 0" stiffness="0.001" damping="1" width="0.05" rgba="0 0 0.9 1">
+    <spatial name="cable_tendon_1" limited="true" range="0 20" actuatorfrcrange="-1000 0" damping="1" width="0.05" rgba="0 0 0.9 1">
       <site site="distal_anchor_1"/>
       <site site="proximal_anchor_1"/>
     </spatial>
-    <spatial name="cable_tendon_2" limited="true" range="0 20" actuatorfrcrange="-1000 0" stiffness="0.001" damping="1" width="0.05" rgba="0 0 0.9 1">
+    <spatial name="cable_tendon_2" limited="true" range="0 20" actuatorfrcrange="-1000 0" damping="1" width="0.05" rgba="0 0 0.9 1">
       <site site="distal_anchor_2"/>
       <site site="proximal_anchor_2"/>
     </spatial>
-    <spatial name="cable_tendon_3" limited="true" range="0 20" actuatorfrcrange="-1000 0" stiffness="0.001" damping="1" width="0.05" rgba="0 0 0.9 1">
+    <spatial name="cable_tendon_3" limited="true" range="0 20" actuatorfrcrange="-1000 0" damping="1" width="0.05" rgba="0 0 0.9 1">
       <site site="distal_anchor_3"/>
       <site site="proximal_anchor_3"/>
     </spatial>
-    <spatial name="cable_tendon_4" limited="true" range="0 20" actuatorfrcrange="-1000 0" stiffness="0.001" damping="1" width="0.05" rgba="0 0 0.9 1">
+    <spatial name="cable_tendon_4" limited="true" range="0 20" actuatorfrcrange="-1000 0" damping="1" width="0.05" rgba="0 0 0.9 1">
       <site site="distal_anchor_4"/>
       <site site="proximal_anchor_4"/>
     </spatial>
-    <spatial name="cable_tendon_5" limited="true" range="0 20" actuatorfrcrange="-1000 0" stiffness="0.001" damping="1" width="0.05" rgba="0 0 0.9 1">
+    <spatial name="cable_tendon_5" limited="true" range="0 20" actuatorfrcrange="-1000 0" damping="1" width="0.05" rgba="0 0 0.9 1">
       <site site="distal_anchor_5"/>
       <site site="proximal_anchor_5"/>
     </spatial>
-    <spatial name="cable_tendon_6" limited="true" range="0 20" actuatorfrcrange="-1000 0" stiffness="0.001" damping="1" width="0.05" rgba="0 0 0.9 1">
+    <spatial name="cable_tendon_6" limited="true" range="0 20" actuatorfrcrange="-1000 0" damping="1" width="0.05" rgba="0 0 0.9 1">
       <site site="distal_anchor_6"/>
       <site site="proximal_anchor_6"/>
     </spatial>
-    <spatial name="cable_tendon_7" limited="true" range="0 20" actuatorfrcrange="-1000 0" stiffness="0.001" damping="1" width="0.05" rgba="0 0 0.9 1">
+    <spatial name="cable_tendon_7" limited="true" range="0 20" actuatorfrcrange="-1000 0" damping="1" width="0.05" rgba="0 0 0.9 1">
       <site site="distal_anchor_7"/>
       <site site="proximal_anchor_7"/>
     </spatial>
