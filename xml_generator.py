@@ -1,72 +1,45 @@
-import mujoco
+from cdpr_definition import *
 
-cdpr_model=mujoco.MjSpec.from_file("base.xml") #Some settings can only be easily set in the base file.
-cdpr_model.modelname = "cdpr_8_cables_6_dof"
-cdpr_model.option.gravity= [0, 0, -9.81]
-cdpr_model.worldbody.add_light(
-                                type=mujoco.mjtLightType.mjLIGHT_DIRECTIONAL,
+cdpr_spec=mj.MjSpec.from_file("base.xml") #Some settings can only be easily set in the base file.
+cdpr_spec.modelname = "cdpr_8_cables_6_dof"
+cdpr_spec.option.gravity= [0, 0, -9.81]
+cdpr_spec.worldbody.add_light(
+                                type=mj.mjtLightType.mjLIGHT_DIRECTIONAL,
                                 diffuse=[0.8,0.8,0.8],
                                 specular=[0.2,0.2,0.2],
                               )
+cdpr_spec.worldbody.add_camera(name="main_camera",
+                               pos=[0, -10, 14],
+                               xyaxes=[1, 0, 0, 0, 1, 1],
+                               )
 
-#Fixed frame is centre of world, at height 0, mobile frame is centre of cube.
-#Order is FLD clockwise, then move to FLU clockwise.
-
-machine_frame_length=8
-machine_frame_width=8
-machine_frame_height=8
-proximal_anchor_points=[
-    [-machine_frame_length/2,machine_frame_width/2,0],
-    [machine_frame_length/2,machine_frame_width/2,0],
-    [machine_frame_length/2,-machine_frame_width/2,0],
-    [-machine_frame_length/2,-machine_frame_width/2,0],
-    [-machine_frame_length/2,machine_frame_width/2,machine_frame_height],
-    [machine_frame_length/2,machine_frame_width/2,machine_frame_height],
-    [machine_frame_length/2,-machine_frame_width/2,machine_frame_height],
-    [-machine_frame_length/2,-machine_frame_width/2,machine_frame_height]
-]
-
-end_effector_length=0.5
-end_effector_width=0.5
-end_effector_height=0.5
-distal_anchor_points=[
-    [-end_effector_length/2, end_effector_width/2, -end_effector_height/2],
-    [ end_effector_length/2, end_effector_width/2, -end_effector_height/2],
-    [ end_effector_length/2,-end_effector_width/2, -end_effector_height/2],
-    [-end_effector_length/2,-end_effector_width/2, -end_effector_height/2],
-    [-end_effector_length/2, end_effector_width/2, end_effector_height/2],
-    [ end_effector_length/2, end_effector_width/2, end_effector_height/2],
-    [ end_effector_length/2,-end_effector_width/2, end_effector_height/2],
-    [-end_effector_length/2,-end_effector_width/2, end_effector_height/2],
-]
-
-cdpr_model.worldbody.add_geom(
+cdpr_spec.worldbody.add_geom(
     name="floor",
-    type=mujoco.mjtGeom.mjGEOM_PLANE,
+    type=mj.mjtGeom.mjGEOM_PLANE,
     size=[0, 0, 1],
     rgba=[0.5, 0.5, 0.5, 1],
     material="matplane",
 )
 for anchor_ind,anchor_coord in enumerate(proximal_anchor_points):
-    cdpr_model.worldbody.add_site(
+    cdpr_spec.worldbody.add_site(
         name=f"proximal_anchor_{anchor_ind}",
         pos=anchor_coord,
         size=[0.1, 0.1, 0.1],
         rgba=[1, 0, 0, 1],
     )
 
-end_effector = cdpr_model.worldbody.add_body(
+end_effector = cdpr_spec.worldbody.add_body(
     name="end_effector",
     pos=[0, 0, machine_frame_height / 2],
 )
 end_effector.add_geom(
-    type=mujoco.mjtGeom.mjGEOM_BOX,
+    type=mj.mjtGeom.mjGEOM_BOX,
     size=[end_effector_length/2, end_effector_width/2, end_effector_height/2],
     rgba=[0, 0.9, 0, 1],
-    density=10, #If this value is too high, the cables will not be able to move the end effector.
+    density=5, #If this value is too high, the cables will not be able to move the end effector.
 )
 joint = end_effector.add_joint(
-    type=mujoco.mjtJoint.mjJNT_FREE,
+    type=mj.mjtJoint.mjJNT_FREE,
 )
 for anchor_ind,anchor_coord in enumerate(distal_anchor_points):
     end_effector.add_site(
@@ -76,50 +49,68 @@ for anchor_ind,anchor_coord in enumerate(distal_anchor_points):
         rgba=[1, 0, 0, 1],
     )
 
+cross_config=False
 for i in range(len(proximal_anchor_points)):
-    tendon=cdpr_model.add_tendon( #The tendon contracts with negative control values, so opposite to CDPR convention.
+    tendon=cdpr_spec.add_tendon( #The tendon contracts with negative control values, so opposite to CDPR convention.
         name=f'cable_tendon_{i}',
         limited=True,
         damping=1, #Higher this value is, the more resistant to movement the cable will be, so lower is more cablistic.
-        range=[0, 10], #Limits on the length of the tendon, still exerts force within this range.
+        range=[0, 20], #Limits on the length of the tendon, still exerts force within this range.
         width=0.05, #Width has no effect on the amount of force the tendon can exert, for visualization only.
         rgba=[0, 0, 0.9, 1],
+        actfrcrange=[-1000, 0],
     )
-    tendon.wrap_site(f'distal_anchor_{i}')
-    tendon.wrap_site(f'proximal_anchor_{i}')
-    tendon_actuator=cdpr_model.add_actuator(
+    if cross_config:
+        tendon.wrap_site(f'proximal_anchor_{i}')
+        tendon.wrap_site(f'distal_anchor_{(i+4)%8}')
+    else:
+        tendon.wrap_site(f'distal_anchor_{i}')
+        tendon.wrap_site(f'proximal_anchor_{i}')
+    tendon_actuator=cdpr_spec.add_actuator(
         target=tendon.name,
-        trntype=mujoco.mjtTrn.mjTRN_TENDON,
+        trntype=mj.mjtTrn.mjTRN_TENDON,
         ctrllimited=True,
-        ctrlrange=[0, 10],
-        biastype=mujoco.mjtBias.mjBIAS_AFFINE,
+        ctrlrange=[0, 20],
+        biastype=mj.mjtBias.mjBIAS_AFFINE,
         forcerange=[-1000, 0],
     )
     tendon_actuator.set_to_position(kp=50)
-    cdpr_model.add_sensor(
-        type=mujoco.mjtSensor.mjSENS_TENDONPOS,
-        objtype=mujoco.mjtObj.mjOBJ_TENDON,
+    cdpr_spec.add_sensor(
+        type=mj.mjtSensor.mjSENS_TENDONPOS,
+        objtype=mj.mjtObj.mjOBJ_TENDON,
         objname=tendon.name,
     )
-    cdpr_model.add_sensor(
-        type=mujoco.mjtSensor.mjSENS_TENDONACTFRC,
-        objtype=mujoco.mjtObj.mjOBJ_TENDON,
+    cdpr_spec.add_sensor(
+        type=mj.mjtSensor.mjSENS_TENDONACTFRC,
+        objtype=mj.mjtObj.mjOBJ_TENDON,
         objname=tendon.name,
     )
 
-cdpr_model.add_sensor(
+cdpr_spec.add_sensor(
     name="end_effector_position",
-    type=mujoco.mjtSensor.mjSENS_FRAMEPOS,
-    objtype=mujoco.mjtObj.mjOBJ_BODY,
+    type=mj.mjtSensor.mjSENS_FRAMEPOS,
+    objtype=mj.mjtObj.mjOBJ_BODY,
     objname=end_effector.name,
 )
-cdpr_model.add_sensor(
-    name="end_effector_quaternion",
-    type=mujoco.mjtSensor.mjSENS_FRAMEQUAT,
-    objtype=mujoco.mjtObj.mjOBJ_BODY,
+cdpr_spec.add_sensor(
+    name="end_effector_xv",
+    type=mj.mjtSensor.mjSENS_FRAMEXAXIS,
+    objtype=mj.mjtObj.mjOBJ_BODY,
+    objname=end_effector.name,
+)
+cdpr_spec.add_sensor(
+    name="end_effector_yv",
+    type=mj.mjtSensor.mjSENS_FRAMEYAXIS,
+    objtype=mj.mjtObj.mjOBJ_BODY,
+    objname=end_effector.name,
+)
+cdpr_spec.add_sensor(
+    name="end_effector_zv",
+    type=mj.mjtSensor.mjSENS_FRAMEZAXIS,
+    objtype=mj.mjtObj.mjOBJ_BODY,
     objname=end_effector.name,
 )
 
-cdpr_model.compile()
+cdpr_spec.compile()
 with open("cdpr_8_6.xml", "w") as file:
-    file.write(cdpr_model.to_xml())
+    file.write(cdpr_spec.to_xml())
