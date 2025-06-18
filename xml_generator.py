@@ -58,7 +58,8 @@ for i in range(len(proximal_anchor_points)):
         range=[0, 20], #Limits on the length of the tendon, still exerts force within this range.
         width=0.05, #Width has no effect on the amount of force the tendon can exert, for visualization only.
         rgba=[0, 0, 0.9, 1],
-        actfrcrange=[-1000, 0],
+        stiffness=0,
+        springlength=[0, 20]
     )
     if cross_config:
         tendon.wrap_site(f'proximal_anchor_{i}')
@@ -66,15 +67,37 @@ for i in range(len(proximal_anchor_points)):
     else:
         tendon.wrap_site(f'distal_anchor_{i}')
         tendon.wrap_site(f'proximal_anchor_{i}')
+    slider = cdpr_spec.worldbody.add_body(
+        pos=proximal_anchor_points[i],
+    )
+    slider.add_geom(
+        type=mj.mjtGeom.mjGEOM_SPHERE,
+        size=[0.2, 1, 1],
+        rgba=[0.0, 0.9, 0.0, 1],
+        density=0.1,
+        contype=0,
+        conaffinity=0,
+    )
+    slider_joint=slider.add_joint(
+        name=f'slider_joint_{i}',
+        type=mj.mjtJoint.mjJNT_SLIDE,
+        axis=np.array([0, 1, 0])*np.sign(proximal_anchor_points[i][1]),
+    )
+    slider_site=slider.add_site(
+        name=f'slider_site_{i}',
+        pos=[0, 0, 0],
+        size=[0.1, 0.1, 0.1],
+        rgba=[0.9, 0, 0, 1],
+    )
+    tendon.wrap_site(slider_site.name)
     tendon_actuator=cdpr_spec.add_actuator(
-        target=tendon.name,
-        trntype=mj.mjtTrn.mjTRN_TENDON,
+        target=slider_joint.name,
+        trntype=mj.mjtTrn.mjTRN_JOINT,
         ctrllimited=True,
         ctrlrange=[0, 20],
         biastype=mj.mjtBias.mjBIAS_AFFINE,
-        forcerange=[-1000, 0],
     )
-    tendon_actuator.set_to_position(kp=50)
+    tendon_actuator.set_to_position(kp=20)
     cdpr_spec.add_sensor(
         type=mj.mjtSensor.mjSENS_TENDONPOS,
         objtype=mj.mjtObj.mjOBJ_TENDON,
