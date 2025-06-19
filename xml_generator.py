@@ -54,7 +54,7 @@ for i in range(len(proximal_anchor_points)):
     tendon=cdpr_spec.add_tendon( #The tendon contracts with negative control values, so opposite to CDPR convention.
         name=f'cable_tendon_{i}',
         limited=True,
-        damping=1, #Higher this value is, the more resistant to movement the cable will be, so lower is more cablistic.
+        damping=0, #Higher this value is, the more resistant to movement the cable will be, so lower is more cablistic.
         range=[0, 20], #Limits on the length of the tendon, still exerts force within this range.
         width=0.05, #Width has no effect on the amount of force the tendon can exert, for visualization only.
         rgba=[0, 0, 0.9, 1],
@@ -74,7 +74,7 @@ for i in range(len(proximal_anchor_points)):
         type=mj.mjtGeom.mjGEOM_SPHERE,
         size=[0.2, 1, 1],
         rgba=[0.0, 0.9, 0.0, 1],
-        density=0.1,
+        density=20,
         contype=0,
         conaffinity=0,
     )
@@ -97,14 +97,15 @@ for i in range(len(proximal_anchor_points)):
         ctrlrange=[0, 20],
         biastype=mj.mjtBias.mjBIAS_AFFINE,
     )
-    tendon_actuator.set_to_position(kp=20)
+    tendon_actuator.set_to_position(kp=50, dampratio=1)
     cdpr_spec.add_sensor(
         type=mj.mjtSensor.mjSENS_TENDONPOS,
         objtype=mj.mjtObj.mjOBJ_TENDON,
         objname=tendon.name,
     )
     cdpr_spec.add_sensor(
-        type=mj.mjtSensor.mjSENS_TENDONACTFRC,
+        name=f"cable_tendon_force_{i}",
+        type=mj.mjtSensor.mjSENS_TENDONLIMITFRC,
         objtype=mj.mjtObj.mjOBJ_TENDON,
         objname=tendon.name,
     )
