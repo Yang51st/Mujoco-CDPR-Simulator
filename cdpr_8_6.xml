@@ -8,64 +8,64 @@
 
   <worldbody>
     <geom name="floor" size="0 0 1" type="plane" material="matplane"/>
-    <site name="proximal_anchor_0" pos="-4 4 0" size="0.1" rgba="1 0 0 1"/>
-    <site name="proximal_anchor_1" pos="4 4 0" size="0.1" rgba="1 0 0 1"/>
-    <site name="proximal_anchor_2" pos="4 -4 0" size="0.1" rgba="1 0 0 1"/>
-    <site name="proximal_anchor_3" pos="-4 -4 0" size="0.1" rgba="1 0 0 1"/>
-    <site name="proximal_anchor_4" pos="-4 4 8" size="0.1" rgba="1 0 0 1"/>
-    <site name="proximal_anchor_5" pos="4 4 8" size="0.1" rgba="1 0 0 1"/>
-    <site name="proximal_anchor_6" pos="4 -4 8" size="0.1" rgba="1 0 0 1"/>
-    <site name="proximal_anchor_7" pos="-4 -4 8" size="0.1" rgba="1 0 0 1"/>
+    <site name="proximal_anchor_0" pos="-3 3.5 0" size="0.1" rgba="1 0 0 1"/>
+    <site name="proximal_anchor_1" pos="3 3.5 0" size="0.1" rgba="1 0 0 1"/>
+    <site name="proximal_anchor_2" pos="3 -3.5 0" size="0.1" rgba="1 0 0 1"/>
+    <site name="proximal_anchor_3" pos="-3 -3.5 0" size="0.1" rgba="1 0 0 1"/>
+    <site name="proximal_anchor_4" pos="-3 3.5 8" size="0.1" rgba="1 0 0 1"/>
+    <site name="proximal_anchor_5" pos="3 3.5 8" size="0.1" rgba="1 0 0 1"/>
+    <site name="proximal_anchor_6" pos="3 -3.5 8" size="0.1" rgba="1 0 0 1"/>
+    <site name="proximal_anchor_7" pos="-3 -3.5 8" size="0.1" rgba="1 0 0 1"/>
     <camera name="main_camera" pos="0 -10 14" quat="0.92388 0.382683 0 0"/>
     <light pos="0 0 0" dir="0 0 -1" type="directional" diffuse="0.8 0.8 0.8" specular="0.2 0.2 0.2"/>
     <body name="end_effector" pos="0 0 4">
       <joint type="free" limited="false" actuatorfrclimited="false"/>
-      <geom size="0.25 0.25 0.25" type="box" mass="10" rgba="0 0.9 0 1"/>
-      <site name="distal_anchor_0" pos="-0.25 0.25 -0.25" size="0.1" rgba="1 0 0 1"/>
-      <site name="distal_anchor_1" pos="0.25 0.25 -0.25" size="0.1" rgba="1 0 0 1"/>
-      <site name="distal_anchor_2" pos="0.25 -0.25 -0.25" size="0.1" rgba="1 0 0 1"/>
-      <site name="distal_anchor_3" pos="-0.25 -0.25 -0.25" size="0.1" rgba="1 0 0 1"/>
-      <site name="distal_anchor_4" pos="-0.25 0.25 0.25" size="0.1" rgba="1 0 0 1"/>
-      <site name="distal_anchor_5" pos="0.25 0.25 0.25" size="0.1" rgba="1 0 0 1"/>
-      <site name="distal_anchor_6" pos="0.25 -0.25 0.25" size="0.1" rgba="1 0 0 1"/>
-      <site name="distal_anchor_7" pos="-0.25 -0.25 0.25" size="0.1" rgba="1 0 0 1"/>
+      <geom size="0.15 0.2 0.25" type="box" mass="10" rgba="0 0.9 0 1"/>
+      <site name="distal_anchor_0" pos="-0.15 0.2 -0.25" size="0.1" rgba="1 0 0 1"/>
+      <site name="distal_anchor_1" pos="0.15 0.2 -0.25" size="0.1" rgba="1 0 0 1"/>
+      <site name="distal_anchor_2" pos="0.15 -0.2 -0.25" size="0.1" rgba="1 0 0 1"/>
+      <site name="distal_anchor_3" pos="-0.15 -0.2 -0.25" size="0.1" rgba="1 0 0 1"/>
+      <site name="distal_anchor_4" pos="-0.15 0.2 0.25" size="0.1" rgba="1 0 0 1"/>
+      <site name="distal_anchor_5" pos="0.15 0.2 0.25" size="0.1" rgba="1 0 0 1"/>
+      <site name="distal_anchor_6" pos="0.15 -0.2 0.25" size="0.1" rgba="1 0 0 1"/>
+      <site name="distal_anchor_7" pos="-0.15 -0.2 0.25" size="0.1" rgba="1 0 0 1"/>
     </body>
-    <body pos="-4 4 0">
+    <body pos="-3 3.5 0">
       <joint name="slider_joint_0" pos="0 0 0" axis="0 1 0" type="slide" range="0 20"/>
       <geom size="0.2" contype="0" conaffinity="0" mass="5" rgba="0 0.9 0 1"/>
       <site name="slider_site_0" pos="0 0 0" size="0.1" rgba="0.9 0 0 1"/>
     </body>
-    <body pos="4 4 0">
+    <body pos="3 3.5 0">
       <joint name="slider_joint_1" pos="0 0 0" axis="0 1 0" type="slide" range="0 20"/>
       <geom size="0.2" contype="0" conaffinity="0" mass="5" rgba="0 0.9 0 1"/>
       <site name="slider_site_1" pos="0 0 0" size="0.1" rgba="0.9 0 0 1"/>
     </body>
-    <body pos="4 -4 0">
+    <body pos="3 -3.5 0">
       <joint name="slider_joint_2" pos="0 0 0" axis="0 -1 0" type="slide" range="0 20"/>
       <geom size="0.2" contype="0" conaffinity="0" mass="5" rgba="0 0.9 0 1"/>
       <site name="slider_site_2" pos="0 0 0" size="0.1" rgba="0.9 0 0 1"/>
     </body>
-    <body pos="-4 -4 0">
+    <body pos="-3 -3.5 0">
       <joint name="slider_joint_3" pos="0 0 0" axis="0 -1 0" type="slide" range="0 20"/>
       <geom size="0.2" contype="0" conaffinity="0" mass="5" rgba="0 0.9 0 1"/>
       <site name="slider_site_3" pos="0 0 0" size="0.1" rgba="0.9 0 0 1"/>
     </body>
-    <body pos="-4 4 8">
+    <body pos="-3 3.5 8">
       <joint name="slider_joint_4" pos="0 0 0" axis="0 1 0" type="slide" range="0 20"/>
       <geom size="0.2" contype="0" conaffinity="0" mass="5" rgba="0 0.9 0 1"/>
       <site name="slider_site_4" pos="0 0 0" size="0.1" rgba="0.9 0 0 1"/>
     </body>
-    <body pos="4 4 8">
+    <body pos="3 3.5 8">
       <joint name="slider_joint_5" pos="0 0 0" axis="0 1 0" type="slide" range="0 20"/>
       <geom size="0.2" contype="0" conaffinity="0" mass="5" rgba="0 0.9 0 1"/>
       <site name="slider_site_5" pos="0 0 0" size="0.1" rgba="0.9 0 0 1"/>
     </body>
-    <body pos="4 -4 8">
+    <body pos="3 -3.5 8">
       <joint name="slider_joint_6" pos="0 0 0" axis="0 -1 0" type="slide" range="0 20"/>
       <geom size="0.2" contype="0" conaffinity="0" mass="5" rgba="0 0.9 0 1"/>
       <site name="slider_site_6" pos="0 0 0" size="0.1" rgba="0.9 0 0 1"/>
     </body>
-    <body pos="-4 -4 8">
+    <body pos="-3 -3.5 8">
       <joint name="slider_joint_7" pos="0 0 0" axis="0 -1 0" type="slide" range="0 20"/>
       <geom size="0.2" contype="0" conaffinity="0" mass="5" rgba="0 0.9 0 1"/>
       <site name="slider_site_7" pos="0 0 0" size="0.1" rgba="0.9 0 0 1"/>
