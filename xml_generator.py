@@ -36,7 +36,7 @@ end_effector.add_geom(
     type=mj.mjtGeom.mjGEOM_BOX,
     size=[end_effector_length/2, end_effector_width/2, end_effector_height/2],
     rgba=[0, 0.9, 0, 1],
-    density=5, #If this value is too high, the cables will not be able to move the end effector.
+    mass=10, #If this value is too high, the cables will not be able to move the end effector. Also, mass and density are different!
 )
 joint = end_effector.add_joint(
     type=mj.mjtJoint.mjJNT_FREE,
@@ -59,7 +59,8 @@ for i in range(len(proximal_anchor_points)):
         width=0.05, #Width has no effect on the amount of force the tendon can exert, for visualization only.
         rgba=[0, 0, 0.9, 1],
         stiffness=0,
-        springlength=[0, 20]
+        springlength=[0, 20],
+        frictionloss=0.1,
     )
     if cross_config:
         tendon.wrap_site(f'proximal_anchor_{i}')
@@ -74,7 +75,7 @@ for i in range(len(proximal_anchor_points)):
         type=mj.mjtGeom.mjGEOM_SPHERE,
         size=[0.2, 1, 1],
         rgba=[0.0, 0.9, 0.0, 1],
-        density=20,
+        mass=5,
         contype=0,
         conaffinity=0,
     )
@@ -82,6 +83,7 @@ for i in range(len(proximal_anchor_points)):
         name=f'slider_joint_{i}',
         type=mj.mjtJoint.mjJNT_SLIDE,
         axis=np.array([0, 1, 0])*np.sign(proximal_anchor_points[i][1]),
+        range=[0, 20],
     )
     slider_site=slider.add_site(
         name=f'slider_site_{i}',
@@ -94,7 +96,7 @@ for i in range(len(proximal_anchor_points)):
         target=slider_joint.name,
         trntype=mj.mjtTrn.mjTRN_JOINT,
         ctrllimited=True,
-        ctrlrange=[0, 20],
+        ctrlrange=[0, 50], #If this value is above the tendon length range, then the extra controlability will allow for higher cable tensions.
         biastype=mj.mjtBias.mjBIAS_AFFINE,
     )
     tendon_actuator.set_to_position(kp=50, dampratio=1)
