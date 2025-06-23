@@ -7,7 +7,7 @@ from scipy.linalg import null_space
 
 class CDPR_Base:
 
-    def __init__(self, machine_frame_lwh, end_effector_lwh, end_effector_mass, proportionality_constant, control_margin, cable_length_limit, lower_tension_limit, upper_tension_limit):
+    def __init__(self, machine_frame_lwh, end_effector_lwh, end_effector_mass, proportionality_constant, control_margin, cable_length_limit):
         
         self.num_cables = 8
         self.num_dof = 6
@@ -26,8 +26,6 @@ class CDPR_Base:
         self.proportionality_constant = proportionality_constant
         self.control_margin = control_margin
         self.cable_length_limit = cable_length_limit
-        self.lower_tension_limit = lower_tension_limit
-        self.upper_tension_limit = upper_tension_limit
 
         #Fixed frame is centre of world, at height 0, mobile frame is centre of cube.
         #Order is FLD clockwise, then move to FLU clockwise.
@@ -63,9 +61,18 @@ class CDPR_Base:
                                         diffuse=[0.8,0.8,0.8],
                                         specular=[0.2,0.2,0.2],
                                     )
+        
         cdpr_spec.worldbody.add_camera(name="main_camera",
-                                    pos=[0, -10, 14],
+                                    pos=[0, -self.machine_frame_width*1.75, self.machine_frame_height*1.75],
                                     xyaxes=[1, 0, 0, 0, 1, 1],
+                                    )
+        cdpr_spec.worldbody.add_camera(name="side_camera",
+                                    pos=[2*self.machine_frame_length, 0, self.machine_frame_height/2],
+                                    xyaxes=[0, 1, 0, 0, 0, 1],
+                                    )
+        cdpr_spec.worldbody.add_camera(name="top_camera",
+                                    pos=[0, 0, 2*self.machine_frame_height],
+                                    xyaxes=[1, 0, 0, 0, 1, 0],
                                     )
 
         cdpr_spec.worldbody.add_geom(
@@ -85,7 +92,7 @@ class CDPR_Base:
 
         end_effector = cdpr_spec.worldbody.add_body(
             name="end_effector",
-            pos=[0, 0, self.machine_frame_height/2],
+            pos=[0, 0, self.end_effector_height/2],
         )
         end_effector.add_geom(
             type=mj.mjtGeom.mjGEOM_BOX,

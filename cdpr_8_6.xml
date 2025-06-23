@@ -8,107 +8,109 @@
 
   <worldbody>
     <geom name="floor" size="0 0 1" type="plane" material="matplane"/>
-    <site name="proximal_anchor_0" pos="-3 3.5 0" size="0.1" rgba="1 0 0 1"/>
-    <site name="proximal_anchor_1" pos="3 3.5 0" size="0.1" rgba="1 0 0 1"/>
-    <site name="proximal_anchor_2" pos="3 -3.5 0" size="0.1" rgba="1 0 0 1"/>
-    <site name="proximal_anchor_3" pos="-3 -3.5 0" size="0.1" rgba="1 0 0 1"/>
-    <site name="proximal_anchor_4" pos="-3 3.5 8" size="0.1" rgba="1 0 0 1"/>
-    <site name="proximal_anchor_5" pos="3 3.5 8" size="0.1" rgba="1 0 0 1"/>
-    <site name="proximal_anchor_6" pos="3 -3.5 8" size="0.1" rgba="1 0 0 1"/>
-    <site name="proximal_anchor_7" pos="-3 -3.5 8" size="0.1" rgba="1 0 0 1"/>
-    <camera name="main_camera" pos="0 -10 14" quat="0.92388 0.382683 0 0"/>
+    <site name="proximal_anchor_0" pos="-7.7 5.16 0" size="0.1" rgba="1 0 0 1"/>
+    <site name="proximal_anchor_1" pos="7.7 5.16 0" size="0.1" rgba="1 0 0 1"/>
+    <site name="proximal_anchor_2" pos="7.7 -5.16 0" size="0.1" rgba="1 0 0 1"/>
+    <site name="proximal_anchor_3" pos="-7.7 -5.16 0" size="0.1" rgba="1 0 0 1"/>
+    <site name="proximal_anchor_4" pos="-7.7 5.16 17.8" size="0.1" rgba="1 0 0 1"/>
+    <site name="proximal_anchor_5" pos="7.7 5.16 17.8" size="0.1" rgba="1 0 0 1"/>
+    <site name="proximal_anchor_6" pos="7.7 -5.16 17.8" size="0.1" rgba="1 0 0 1"/>
+    <site name="proximal_anchor_7" pos="-7.7 -5.16 17.8" size="0.1" rgba="1 0 0 1"/>
+    <camera name="main_camera" pos="0 -18.06 31.15" quat="0.92388 0.382683 0 0"/>
+    <camera name="side_camera" pos="30.8 0 8.9" quat="0.5 0.5 0.5 0.5"/>
+    <camera name="top_camera" pos="0 0 35.6"/>
     <light pos="0 0 0" dir="0 0 -1" type="directional" diffuse="0.8 0.8 0.8" specular="0.2 0.2 0.2"/>
-    <body name="end_effector" pos="0 0 4">
+    <body name="end_effector" pos="0 0 0.425">
       <joint type="free" limited="false" actuatorfrclimited="false"/>
-      <geom size="0.15 0.2 0.25" type="box" mass="10" rgba="0 0.9 0 1"/>
-      <site name="distal_anchor_0" pos="-0.15 0.2 -0.25" size="0.1" rgba="1 0 0 1"/>
-      <site name="distal_anchor_1" pos="0.15 0.2 -0.25" size="0.1" rgba="1 0 0 1"/>
-      <site name="distal_anchor_2" pos="0.15 -0.2 -0.25" size="0.1" rgba="1 0 0 1"/>
-      <site name="distal_anchor_3" pos="-0.15 -0.2 -0.25" size="0.1" rgba="1 0 0 1"/>
-      <site name="distal_anchor_4" pos="-0.15 0.2 0.25" size="0.1" rgba="1 0 0 1"/>
-      <site name="distal_anchor_5" pos="0.15 0.2 0.25" size="0.1" rgba="1 0 0 1"/>
-      <site name="distal_anchor_6" pos="0.15 -0.2 0.25" size="0.1" rgba="1 0 0 1"/>
-      <site name="distal_anchor_7" pos="-0.15 -0.2 0.25" size="0.1" rgba="1 0 0 1"/>
+      <geom size="0.876812 0.876812 0.425" type="box" mass="1" rgba="0 0.9 0 1"/>
+      <site name="distal_anchor_0" pos="-0.876812 0.876812 -0.425" size="0.1" rgba="1 0 0 1"/>
+      <site name="distal_anchor_1" pos="0.876812 0.876812 -0.425" size="0.1" rgba="1 0 0 1"/>
+      <site name="distal_anchor_2" pos="0.876812 -0.876812 -0.425" size="0.1" rgba="1 0 0 1"/>
+      <site name="distal_anchor_3" pos="-0.876812 -0.876812 -0.425" size="0.1" rgba="1 0 0 1"/>
+      <site name="distal_anchor_4" pos="-0.876812 0.876812 0.425" size="0.1" rgba="1 0 0 1"/>
+      <site name="distal_anchor_5" pos="0.876812 0.876812 0.425" size="0.1" rgba="1 0 0 1"/>
+      <site name="distal_anchor_6" pos="0.876812 -0.876812 0.425" size="0.1" rgba="1 0 0 1"/>
+      <site name="distal_anchor_7" pos="-0.876812 -0.876812 0.425" size="0.1" rgba="1 0 0 1"/>
     </body>
-    <body pos="-3 3.5 0">
-      <joint name="slider_joint_0" pos="0 0 0" axis="0 1 0" type="slide" range="0 20"/>
-      <geom size="0.2" contype="0" conaffinity="0" mass="5" rgba="0 0.9 0 1"/>
+    <body pos="-7.7 5.16 0">
+      <joint name="slider_joint_0" pos="0 0 0" axis="0 1 0" type="slide" range="0 40"/>
+      <geom size="0.2" contype="0" conaffinity="0" mass="0.5" rgba="0 0.9 0 1"/>
       <site name="slider_site_0" pos="0 0 0" size="0.1" rgba="0.9 0 0 1"/>
     </body>
-    <body pos="3 3.5 0">
-      <joint name="slider_joint_1" pos="0 0 0" axis="0 1 0" type="slide" range="0 20"/>
-      <geom size="0.2" contype="0" conaffinity="0" mass="5" rgba="0 0.9 0 1"/>
+    <body pos="7.7 5.16 0">
+      <joint name="slider_joint_1" pos="0 0 0" axis="0 1 0" type="slide" range="0 40"/>
+      <geom size="0.2" contype="0" conaffinity="0" mass="0.5" rgba="0 0.9 0 1"/>
       <site name="slider_site_1" pos="0 0 0" size="0.1" rgba="0.9 0 0 1"/>
     </body>
-    <body pos="3 -3.5 0">
-      <joint name="slider_joint_2" pos="0 0 0" axis="0 -1 0" type="slide" range="0 20"/>
-      <geom size="0.2" contype="0" conaffinity="0" mass="5" rgba="0 0.9 0 1"/>
+    <body pos="7.7 -5.16 0">
+      <joint name="slider_joint_2" pos="0 0 0" axis="0 -1 0" type="slide" range="0 40"/>
+      <geom size="0.2" contype="0" conaffinity="0" mass="0.5" rgba="0 0.9 0 1"/>
       <site name="slider_site_2" pos="0 0 0" size="0.1" rgba="0.9 0 0 1"/>
     </body>
-    <body pos="-3 -3.5 0">
-      <joint name="slider_joint_3" pos="0 0 0" axis="0 -1 0" type="slide" range="0 20"/>
-      <geom size="0.2" contype="0" conaffinity="0" mass="5" rgba="0 0.9 0 1"/>
+    <body pos="-7.7 -5.16 0">
+      <joint name="slider_joint_3" pos="0 0 0" axis="0 -1 0" type="slide" range="0 40"/>
+      <geom size="0.2" contype="0" conaffinity="0" mass="0.5" rgba="0 0.9 0 1"/>
       <site name="slider_site_3" pos="0 0 0" size="0.1" rgba="0.9 0 0 1"/>
     </body>
-    <body pos="-3 3.5 8">
-      <joint name="slider_joint_4" pos="0 0 0" axis="0 1 0" type="slide" range="0 20"/>
-      <geom size="0.2" contype="0" conaffinity="0" mass="5" rgba="0 0.9 0 1"/>
+    <body pos="-7.7 5.16 17.8">
+      <joint name="slider_joint_4" pos="0 0 0" axis="0 1 0" type="slide" range="0 40"/>
+      <geom size="0.2" contype="0" conaffinity="0" mass="0.5" rgba="0 0.9 0 1"/>
       <site name="slider_site_4" pos="0 0 0" size="0.1" rgba="0.9 0 0 1"/>
     </body>
-    <body pos="3 3.5 8">
-      <joint name="slider_joint_5" pos="0 0 0" axis="0 1 0" type="slide" range="0 20"/>
-      <geom size="0.2" contype="0" conaffinity="0" mass="5" rgba="0 0.9 0 1"/>
+    <body pos="7.7 5.16 17.8">
+      <joint name="slider_joint_5" pos="0 0 0" axis="0 1 0" type="slide" range="0 40"/>
+      <geom size="0.2" contype="0" conaffinity="0" mass="0.5" rgba="0 0.9 0 1"/>
       <site name="slider_site_5" pos="0 0 0" size="0.1" rgba="0.9 0 0 1"/>
     </body>
-    <body pos="3 -3.5 8">
-      <joint name="slider_joint_6" pos="0 0 0" axis="0 -1 0" type="slide" range="0 20"/>
-      <geom size="0.2" contype="0" conaffinity="0" mass="5" rgba="0 0.9 0 1"/>
+    <body pos="7.7 -5.16 17.8">
+      <joint name="slider_joint_6" pos="0 0 0" axis="0 -1 0" type="slide" range="0 40"/>
+      <geom size="0.2" contype="0" conaffinity="0" mass="0.5" rgba="0 0.9 0 1"/>
       <site name="slider_site_6" pos="0 0 0" size="0.1" rgba="0.9 0 0 1"/>
     </body>
-    <body pos="-3 -3.5 8">
-      <joint name="slider_joint_7" pos="0 0 0" axis="0 -1 0" type="slide" range="0 20"/>
-      <geom size="0.2" contype="0" conaffinity="0" mass="5" rgba="0 0.9 0 1"/>
+    <body pos="-7.7 -5.16 17.8">
+      <joint name="slider_joint_7" pos="0 0 0" axis="0 -1 0" type="slide" range="0 40"/>
+      <geom size="0.2" contype="0" conaffinity="0" mass="0.5" rgba="0 0.9 0 1"/>
       <site name="slider_site_7" pos="0 0 0" size="0.1" rgba="0.9 0 0 1"/>
     </body>
   </worldbody>
 
   <tendon>
-    <spatial name="cable_tendon_0" limited="true" range="0 20" frictionloss="0.1" springlength="0 20" width="0.05" rgba="0 0 0.9 1">
+    <spatial name="cable_tendon_0" limited="true" range="0 40" frictionloss="0.1" springlength="0 40" width="0.05" rgba="0 0 0.9 1">
       <site site="distal_anchor_0"/>
       <site site="proximal_anchor_0"/>
       <site site="slider_site_0"/>
     </spatial>
-    <spatial name="cable_tendon_1" limited="true" range="0 20" frictionloss="0.1" springlength="0 20" width="0.05" rgba="0 0 0.9 1">
+    <spatial name="cable_tendon_1" limited="true" range="0 40" frictionloss="0.1" springlength="0 40" width="0.05" rgba="0 0 0.9 1">
       <site site="distal_anchor_1"/>
       <site site="proximal_anchor_1"/>
       <site site="slider_site_1"/>
     </spatial>
-    <spatial name="cable_tendon_2" limited="true" range="0 20" frictionloss="0.1" springlength="0 20" width="0.05" rgba="0 0 0.9 1">
+    <spatial name="cable_tendon_2" limited="true" range="0 40" frictionloss="0.1" springlength="0 40" width="0.05" rgba="0 0 0.9 1">
       <site site="distal_anchor_2"/>
       <site site="proximal_anchor_2"/>
       <site site="slider_site_2"/>
     </spatial>
-    <spatial name="cable_tendon_3" limited="true" range="0 20" frictionloss="0.1" springlength="0 20" width="0.05" rgba="0 0 0.9 1">
+    <spatial name="cable_tendon_3" limited="true" range="0 40" frictionloss="0.1" springlength="0 40" width="0.05" rgba="0 0 0.9 1">
       <site site="distal_anchor_3"/>
       <site site="proximal_anchor_3"/>
       <site site="slider_site_3"/>
     </spatial>
-    <spatial name="cable_tendon_4" limited="true" range="0 20" frictionloss="0.1" springlength="0 20" width="0.05" rgba="0 0 0.9 1">
+    <spatial name="cable_tendon_4" limited="true" range="0 40" frictionloss="0.1" springlength="0 40" width="0.05" rgba="0 0 0.9 1">
       <site site="distal_anchor_4"/>
       <site site="proximal_anchor_4"/>
       <site site="slider_site_4"/>
     </spatial>
-    <spatial name="cable_tendon_5" limited="true" range="0 20" frictionloss="0.1" springlength="0 20" width="0.05" rgba="0 0 0.9 1">
+    <spatial name="cable_tendon_5" limited="true" range="0 40" frictionloss="0.1" springlength="0 40" width="0.05" rgba="0 0 0.9 1">
       <site site="distal_anchor_5"/>
       <site site="proximal_anchor_5"/>
       <site site="slider_site_5"/>
     </spatial>
-    <spatial name="cable_tendon_6" limited="true" range="0 20" frictionloss="0.1" springlength="0 20" width="0.05" rgba="0 0 0.9 1">
+    <spatial name="cable_tendon_6" limited="true" range="0 40" frictionloss="0.1" springlength="0 40" width="0.05" rgba="0 0 0.9 1">
       <site site="distal_anchor_6"/>
       <site site="proximal_anchor_6"/>
       <site site="slider_site_6"/>
     </spatial>
-    <spatial name="cable_tendon_7" limited="true" range="0 20" frictionloss="0.1" springlength="0 20" width="0.05" rgba="0 0 0.9 1">
+    <spatial name="cable_tendon_7" limited="true" range="0 40" frictionloss="0.1" springlength="0 40" width="0.05" rgba="0 0 0.9 1">
       <site site="distal_anchor_7"/>
       <site site="proximal_anchor_7"/>
       <site site="slider_site_7"/>
@@ -116,14 +118,14 @@
   </tendon>
 
   <actuator>
-    <general joint="slider_joint_0" ctrllimited="true" ctrlrange="0 50" biastype="affine" gainprm="50" biasprm="0 -50 1"/>
-    <general joint="slider_joint_1" ctrllimited="true" ctrlrange="0 50" biastype="affine" gainprm="50" biasprm="0 -50 1"/>
-    <general joint="slider_joint_2" ctrllimited="true" ctrlrange="0 50" biastype="affine" gainprm="50" biasprm="0 -50 1"/>
-    <general joint="slider_joint_3" ctrllimited="true" ctrlrange="0 50" biastype="affine" gainprm="50" biasprm="0 -50 1"/>
-    <general joint="slider_joint_4" ctrllimited="true" ctrlrange="0 50" biastype="affine" gainprm="50" biasprm="0 -50 1"/>
-    <general joint="slider_joint_5" ctrllimited="true" ctrlrange="0 50" biastype="affine" gainprm="50" biasprm="0 -50 1"/>
-    <general joint="slider_joint_6" ctrllimited="true" ctrlrange="0 50" biastype="affine" gainprm="50" biasprm="0 -50 1"/>
-    <general joint="slider_joint_7" ctrllimited="true" ctrlrange="0 50" biastype="affine" gainprm="50" biasprm="0 -50 1"/>
+    <general joint="slider_joint_0" ctrllimited="true" ctrlrange="0 70" biastype="affine" gainprm="50" biasprm="0 -50 1"/>
+    <general joint="slider_joint_1" ctrllimited="true" ctrlrange="0 70" biastype="affine" gainprm="50" biasprm="0 -50 1"/>
+    <general joint="slider_joint_2" ctrllimited="true" ctrlrange="0 70" biastype="affine" gainprm="50" biasprm="0 -50 1"/>
+    <general joint="slider_joint_3" ctrllimited="true" ctrlrange="0 70" biastype="affine" gainprm="50" biasprm="0 -50 1"/>
+    <general joint="slider_joint_4" ctrllimited="true" ctrlrange="0 70" biastype="affine" gainprm="50" biasprm="0 -50 1"/>
+    <general joint="slider_joint_5" ctrllimited="true" ctrlrange="0 70" biastype="affine" gainprm="50" biasprm="0 -50 1"/>
+    <general joint="slider_joint_6" ctrllimited="true" ctrlrange="0 70" biastype="affine" gainprm="50" biasprm="0 -50 1"/>
+    <general joint="slider_joint_7" ctrllimited="true" ctrlrange="0 70" biastype="affine" gainprm="50" biasprm="0 -50 1"/>
   </actuator>
 
   <sensor>
