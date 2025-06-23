@@ -16,7 +16,26 @@ class CableDrivenParallelRobot(CDPR_Base):
         else:
             self.upper_tension_limit = upper_tension_limit
 
-    def inverse_kinematics(self, wrench, target_xyz=[0, 0, 0], target_orientation=[0, 0, 0], plot_solution=False):
+    def sense_cable_lengths(self, cdpr_data):
+        cable_lengths=[]
+        for _ in range(self.num_cables):
+            cable_lengths.append(np.linalg.norm(self.proximal_anchor_points[_]-cdpr_data.sensor(f'distal_pos_{_}').data))
+        return np.array(cable_lengths)
+
+    def inverse_kinematics(self, target_xyz=[0, 0, 0], target_orientation=[0, 0, 0]):
+        desired_cable_vectors = np.zeros((self.num_cables, 3))
+        target_xyz = np.array(target_xyz)
+        target_orientation = np.array(target_orientation)
+        rotation = R.from_rotvec(target_orientation, degrees=True)
+
+        for cable_index in range(len(self.proximal_anchor_points)):
+            desired_cable_vectors[cable_index, :] = self.proximal_anchor_points[cable_index, :] - target_xyz - rotation.apply(self.distal_anchor_points[cable_index, :])
+
+        first_stage_cable_lengths = [np.linalg.norm(desired_cable_vectors[cable_index, :]) for cable_index in range(len(self.proximal_anchor_points))]
+        
+        return first_stage_cable_lengths
+
+    def inverse_kinematics_with_tension_distribution(self, wrench, target_xyz=[0, 0, 0], target_orientation=[0, 0, 0], plot_solution=False):
         desired_cable_vectors = np.zeros((self.num_cables, 3))
         target_xyz = np.array(target_xyz)
         target_orientation = np.array(target_orientation)
@@ -113,11 +132,53 @@ class CableDrivenParallelRobot(CDPR_Base):
             self.calculated_cable_tensions[i].append(desired_cable_forces[i])
 
         return desired_cable_forces/kp
+    
+    def forward_kinematics(self, cable_lengths):
+        radius_lower_bounds=self.proximal_anchor_points-(cable_lengths+np.linalg.norm(self.distal_anchor_points,axis=1)).reshape((8,1))*np.ones((8,3))
+        radius_upper_bounds=self.proximal_anchor_points+(cable_lengths+np.linalg.norm(self.distal_anchor_points,axis=1)).reshape((8,1))*np.ones((8,3))
+        lower_indices=np.argmax(radius_lower_bounds,axis=0)
+        upper_indices=np.argmin(radius_upper_bounds,axis=0)
+        lower_corner=np.array([radius_lower_bounds[lower_indices[0],0],
+                               radius_lower_bounds[lower_indices[1],1],
+                               radius_lower_bounds[lower_indices[2],2]])
+        upper_corner=np.array([radius_upper_bounds[upper_indices[0],0],
+                                 radius_upper_bounds[upper_indices[1],1],
+                                 radius_upper_bounds[upper_indices[2],2]])
+        if np.all(lower_corner > upper_corner):
+            print("Cannot perform forward kinematics.")
+            return None
+        
+        lower_corner = np.concatenate((lower_corner, [-180, -180, -180]), axis=0)
+        upper_corner = np.concatenate((upper_corner, [180, 180, 180]), axis=0)
+        initial_guess = (lower_corner + upper_corner) / 2
+
+        def to_be_minimized(input_vector):
+            total_error=0
+            r=input_vector[0:3]
+            rotation = R.from_rotvec(input_vector[3:], degrees=True)
+            for cable_index in range(self.num_cables):
+                cable_vector = self.proximal_anchor_points[cable_index] - r - rotation.apply(self.distal_anchor_points[cable_index])
+                cable_length = np.linalg.norm(cable_vector)
+                total_error += np.square((np.square(cable_length) - np.square(cable_lengths[cable_index])))
+            return total_error
+        
+        result = least_squares(to_be_minimized, initial_guess, bounds=(lower_corner, upper_corner), method='trf', max_nfev=10000)
+        if result.success:
+            return result.x
+        else:
+            print("Forward kinematics failed to converge.")
+            print("Error message:", result.message)
+            return None
 
 """
 cdpr= CableDrivenParallelRobot()
-desired_position=[1,1,8]
-desired_orientation=[5,5,2]
-cdpr.set_cable_tension_limits(lower_tension_limit=10, upper_tension_limit=250)
-cdpr.inverse_kinematics(wrench=[20,30,40,5,8,10], target_xyz=desired_position, target_orientation=desired_orientation, plot_solution=True)
+cdpr.set_cable_tension_limits()
+print(cdpr.forward_kinematics(cable_lengths=np.array([8.05615199,
+                                                8.05615199,
+                                                8.05615199,
+                                                8.05615199,
+                                                18.76710113,
+                                                18.76710113,
+                                                18.76710113,
+                                                18.76710113])))
 """

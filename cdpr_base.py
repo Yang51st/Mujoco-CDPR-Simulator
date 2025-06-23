@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from scipy.spatial.transform import Rotation as R
 from scipy.spatial import ConvexHull
 from scipy.linalg import null_space
+from scipy.optimize import least_squares
 
 class CDPR_Base:
 
@@ -163,9 +164,10 @@ class CDPR_Base:
             )
             tendon_actuator.set_to_position(kp=self.proportionality_constant, dampratio=1)
             cdpr_spec.add_sensor(
-                type=mj.mjtSensor.mjSENS_TENDONPOS,
-                objtype=mj.mjtObj.mjOBJ_TENDON,
-                objname=tendon.name,
+                name=f"distal_pos_{i}",
+                type=mj.mjtSensor.mjSENS_FRAMEPOS,
+                objtype=mj.mjtObj.mjOBJ_SITE,
+                objname=f'distal_anchor_{(i+4)%8}' if cross_config else f'distal_anchor_{i}',
             )
             cdpr_spec.add_sensor(
                 name=f"cable_tendon_force_{i}",

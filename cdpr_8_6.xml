@@ -129,36 +129,28 @@
   </actuator>
 
   <sensor>
-
-    <tendonpos tendon="cable_tendon_0"/>
+    <framepos objtype="site" objname="distal_anchor_0" name="distal_pos_0"/>
 
     <tendonlimitfrc tendon="cable_tendon_0" name="cable_tendon_force_0"/>
-
-    <tendonpos tendon="cable_tendon_1"/>
+    <framepos objtype="site" objname="distal_anchor_1" name="distal_pos_1"/>
 
     <tendonlimitfrc tendon="cable_tendon_1" name="cable_tendon_force_1"/>
-
-    <tendonpos tendon="cable_tendon_2"/>
+    <framepos objtype="site" objname="distal_anchor_2" name="distal_pos_2"/>
 
     <tendonlimitfrc tendon="cable_tendon_2" name="cable_tendon_force_2"/>
-
-    <tendonpos tendon="cable_tendon_3"/>
+    <framepos objtype="site" objname="distal_anchor_3" name="distal_pos_3"/>
 
     <tendonlimitfrc tendon="cable_tendon_3" name="cable_tendon_force_3"/>
-
-    <tendonpos tendon="cable_tendon_4"/>
+    <framepos objtype="site" objname="distal_anchor_4" name="distal_pos_4"/>
 
     <tendonlimitfrc tendon="cable_tendon_4" name="cable_tendon_force_4"/>
-
-    <tendonpos tendon="cable_tendon_5"/>
+    <framepos objtype="site" objname="distal_anchor_5" name="distal_pos_5"/>
 
     <tendonlimitfrc tendon="cable_tendon_5" name="cable_tendon_force_5"/>
-
-    <tendonpos tendon="cable_tendon_6"/>
+    <framepos objtype="site" objname="distal_anchor_6" name="distal_pos_6"/>
 
     <tendonlimitfrc tendon="cable_tendon_6" name="cable_tendon_force_6"/>
-
-    <tendonpos tendon="cable_tendon_7"/>
+    <framepos objtype="site" objname="distal_anchor_7" name="distal_pos_7"/>
 
     <tendonlimitfrc tendon="cable_tendon_7" name="cable_tendon_force_7"/>
     <framepos objtype="body" objname="end_effector" name="end_effector_position"/>
