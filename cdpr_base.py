@@ -53,7 +53,7 @@ class CDPR_Base:
             [-self.end_effector_length/2,-self.end_effector_width/2,  self.end_effector_height/2],
         ])
     
-    def create_mujoco_spec(self):
+    def create_mujoco_spec(self, cross_config=False):
         cdpr_spec=mj.MjSpec.from_file("base.xml") #Some settings can only be easily set in the base file.
         cdpr_spec.modelname = "cdpr_8_cables_6_dof"
         cdpr_spec.option.gravity= [0, 0, -9.81]
@@ -112,7 +112,6 @@ class CDPR_Base:
                 rgba=[1, 0, 0, 1],
             )
 
-        cross_config=False
         for i in range(len(self.proximal_anchor_points)):
             tendon=cdpr_spec.add_tendon( #The tendon contracts with negative control values, so opposite to CDPR convention.
                 name=f'cable_tendon_{i}',

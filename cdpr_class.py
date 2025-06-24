@@ -2,9 +2,15 @@ from cdpr_base import *
 
 class CableDrivenParallelRobot(CDPR_Base):
 
-    def __init__(self, machine_frame_lwh=[15.40, 10.32, 17.80], end_effector_lwh=[1.24*np.sqrt(2), 1.24*np.sqrt(2), 0.85], end_effector_mass=1, proportionality_constant=50, control_margin=30, cable_length_limit=40):
+    def __init__(self, machine_frame_lwh=[15.40, 10.32, 17.80], end_effector_lwh=[1.24*np.sqrt(2), 1.24*np.sqrt(2), 0.85], end_effector_mass=1, proportionality_constant=50, control_margin=30, cable_length_limit=40, p_constant=0.05, i_constant=0.001, d_constant=0.01):
         super().__init__(machine_frame_lwh, end_effector_lwh, end_effector_mass, proportionality_constant, control_margin, cable_length_limit)
         self.calculated_cable_tensions=[[] for _ in range(self.num_cables)]
+        self.p_constant=p_constant
+        self.i_constant=i_constant
+        self.d_constant=d_constant
+        self.previous_errors = np.zeros(self.num_cables)
+        self.cumulative_errors = np.zeros(self.num_cables)
+        self.first_pid_run=True
 
     def reset_cable_tensions_list(self):
         self.calculated_cable_tensions=[[] for _ in range(self.num_cables)]
@@ -21,36 +27,61 @@ class CableDrivenParallelRobot(CDPR_Base):
         for _ in range(self.num_cables):
             cable_lengths.append(np.linalg.norm(self.proximal_anchor_points[_]-cdpr_data.sensor(f'distal_pos_{_}').data))
         return np.array(cable_lengths)
-
-    def inverse_kinematics(self, target_xyz=[0, 0, 0], target_orientation=[0, 0, 0]):
-        desired_cable_vectors = np.zeros((self.num_cables, 3))
-        target_xyz = np.array(target_xyz)
-        target_orientation = np.array(target_orientation)
-        rotation = R.from_rotvec(target_orientation, degrees=True)
-
-        for cable_index in range(len(self.proximal_anchor_points)):
-            desired_cable_vectors[cable_index, :] = self.proximal_anchor_points[cable_index, :] - target_xyz - rotation.apply(self.distal_anchor_points[cable_index, :])
-
-        first_stage_cable_lengths = [np.linalg.norm(desired_cable_vectors[cable_index, :]) for cable_index in range(len(self.proximal_anchor_points))]
-        
-        return first_stage_cable_lengths
-
-    def inverse_kinematics_with_tension_distribution(self, wrench, target_xyz=[0, 0, 0], target_orientation=[0, 0, 0], plot_solution=False):
-        desired_cable_vectors = np.zeros((self.num_cables, 3))
-        target_xyz = np.array(target_xyz)
-        target_orientation = np.array(target_orientation)
-        rotation = R.from_rotvec(target_orientation, degrees=True)
-        wrench = np.array(wrench)
-
-        for cable_index in range(len(self.proximal_anchor_points)):
-            desired_cable_vectors[cable_index, :] = self.proximal_anchor_points[cable_index, :] - target_xyz - rotation.apply(self.distal_anchor_points[cable_index, :])
-
-        first_stage_cable_lengths = [np.linalg.norm(desired_cable_vectors[cable_index, :]) for cable_index in range(len(self.proximal_anchor_points))]
-        second_stage_cable_lengths = self.force_distribution(desired_cable_vectors, rotation, wrench, self.proportionality_constant, plot_solution)
-
-        return first_stage_cable_lengths - second_stage_cable_lengths
     
-    def force_distribution(self, cable_vectors, rotation, wrench, kp, plot_solution=False):
+    def pid_control(self, wrench, target_xyz, target_orientation, cdpr_data):
+        rotation = R.from_rotvec(target_orientation, degrees=True)
+        desired_cable_vectors=self.inverse_kinematics(target_xyz, rotation)
+        desired_cable_lengths = [np.linalg.norm(desired_cable_vectors[cable_index, :]) for cable_index in range(len(self.proximal_anchor_points))]
+        desired_cable_forces=self.force_distribution(desired_cable_vectors, rotation, wrench)
+        sensed_cable_lengths = self.sense_cable_lengths(cdpr_data)
+        cable_errors=sensed_cable_lengths-desired_cable_lengths
+        p_control=self.p_constant * cable_errors
+        if self.first_pid_run:
+            self.previous_errors = cable_errors
+            self.cumulative_errors = np.zeros(self.num_cables)
+            self.first_pid_run = False
+        i_control=self.i_constant * (self.cumulative_errors + cable_errors)
+        d_control=self.d_constant * (cable_errors - self.previous_errors)
+        self.previous_errors = cable_errors
+        self.cumulative_errors += cable_errors
+
+        return p_control+i_control+d_control
+    
+    def ol_joint_position_control(self, wrench, target_xyz, target_orientation):
+        rotation = R.from_rotvec(target_orientation, degrees=True)
+        desired_cable_vectors = self.inverse_kinematics(target_xyz, rotation)
+        desired_cable_forces = self.force_distribution(desired_cable_vectors, rotation, wrench)
+
+        return self.cable_length_limit*np.ones(self.num_cables) + desired_cable_forces/self.proportionality_constant - np.linalg.norm(desired_cable_vectors, axis=1)
+    
+    def cl_joint_position_control(self, target_xyz, target_orientation, cdpr_data):
+        rotation = R.from_rotvec(target_orientation, degrees=True)
+        desired_cable_vectors = self.inverse_kinematics(target_xyz, rotation)
+        desired_cable_lengths=np.linalg.norm(desired_cable_vectors, axis=1)
+        sensed_cable_lengths = self.sense_cable_lengths(cdpr_data)
+        cable_errors = sensed_cable_lengths - desired_cable_lengths
+        p_control = self.p_constant * cable_errors
+        if self.first_pid_run:
+            self.previous_errors = cable_errors
+            self.cumulative_errors = np.zeros(self.num_cables)
+            self.first_pid_run = False
+        i_control = self.i_constant * (self.cumulative_errors + cable_errors)
+        d_control = self.d_constant * (cable_errors - self.previous_errors)
+        self.previous_errors = cable_errors
+        self.cumulative_errors += cable_errors
+
+        return self.cable_length_limit*np.ones(self.num_cables) + p_control + i_control + d_control - np.linalg.norm(desired_cable_vectors, axis=1)
+
+    def inverse_kinematics(self, target_xyz, rotation):
+        desired_cable_vectors = np.zeros((self.num_cables, 3))
+        target_xyz = np.array(target_xyz)
+
+        for cable_index in range(len(self.proximal_anchor_points)):
+            desired_cable_vectors[cable_index, :] = self.proximal_anchor_points[cable_index, :] - target_xyz - rotation.apply(self.distal_anchor_points[cable_index, :])
+        
+        return desired_cable_vectors
+    
+    def force_distribution(self, cable_vectors, rotation, wrench, plot_solution=False):
         """
         The control input for each CDPR slider joint is related to the force applied by the cable through the relation of
         force = kp * (control_input - actual_length), so to produce a desired length to reach the target position there
@@ -60,6 +91,7 @@ class CableDrivenParallelRobot(CDPR_Base):
         """
 
         desired_cable_forces = np.zeros(self.num_cables)
+        wrench = np.array(wrench)
 
         cable_unit_vectors=cable_vectors.T/np.linalg.norm(cable_vectors.T, axis=0)
         moment_arm_vectors=np.cross(rotation.apply(self.distal_anchor_points).T, cable_unit_vectors, axisa=0, axisb=0, axisc=0)
@@ -117,8 +149,8 @@ class CableDrivenParallelRobot(CDPR_Base):
             else:
                 desired_cable_forces = homogeneous_sol
             if plot_solution:
-                plt.xlim(50, 500)
-                plt.ylim(-200, 600)
+                #plt.xlim(50, 500)
+                #plt.ylim(-200, 600)
                 plt.show()
         else:
             desired_cable_forces = homogeneous_sol
@@ -131,7 +163,7 @@ class CableDrivenParallelRobot(CDPR_Base):
                 desired_cable_forces[i] = self.upper_tension_limit
             self.calculated_cable_tensions[i].append(desired_cable_forces[i])
 
-        return desired_cable_forces/kp
+        return desired_cable_forces
     
     def forward_kinematics(self, cable_lengths):
         radius_lower_bounds=self.proximal_anchor_points-(cable_lengths+np.linalg.norm(self.distal_anchor_points,axis=1)).reshape((8,1))*np.ones((8,3))
