@@ -5,6 +5,7 @@ from scipy.spatial.transform import Rotation as R
 from scipy.spatial import ConvexHull
 from scipy.linalg import null_space
 from scipy.optimize import least_squares
+import cv2 as cv
 
 class CDPR_Base:
 
@@ -87,7 +88,7 @@ class CDPR_Base:
             cdpr_spec.worldbody.add_site(
                 name=f"proximal_anchor_{anchor_ind}",
                 pos=anchor_coord,
-                size=[0.1, 0.1, 0.1],
+                size=[0.01, 0.01, 0.01],
                 rgba=[1, 0, 0, 1],
             )
 
@@ -104,11 +105,16 @@ class CDPR_Base:
         end_effector.add_joint(
             type=mj.mjtJoint.mjJNT_FREE,
         )
+        if cross_config:
+            for i in range(int(len(self.distal_anchor_points)/2)):
+                temp_anchor=self.distal_anchor_points[i].copy()
+                self.distal_anchor_points[i]=self.distal_anchor_points[(i+4)%8].copy()
+                self.distal_anchor_points[(i+4)%8]=temp_anchor.copy()
         for anchor_ind,anchor_coord in enumerate(self.distal_anchor_points):
             end_effector.add_site(
                 name=f"distal_anchor_{anchor_ind}",
                 pos=anchor_coord,
-                size=[0.1, 0.1, 0.1],
+                size=[0.01, 0.01, 0.01],
                 rgba=[1, 0, 0, 1],
             )
 
@@ -118,24 +124,20 @@ class CDPR_Base:
                 limited=True,
                 damping=0, #Higher this value is, the more resistant to movement the cable will be, so lower is more cablistic.
                 range=[0, self.cable_length_limit], #Limits on the length of the tendon, still exerts force within this range.
-                width=0.05, #Width has no effect on the amount of force the tendon can exert, for visualization only.
+                width=0.005, #Width has no effect on the amount of force the tendon can exert, for visualization only.
                 rgba=[0, 0, 0.9, 1],
                 stiffness=0,
                 springlength=[0, self.cable_length_limit],
                 frictionloss=0.1,
             )
-            if cross_config:
-                tendon.wrap_site(f'proximal_anchor_{i}')
-                tendon.wrap_site(f'distal_anchor_{(i+4)%8}')
-            else:
-                tendon.wrap_site(f'distal_anchor_{i}')
-                tendon.wrap_site(f'proximal_anchor_{i}')
+            tendon.wrap_site(f'distal_anchor_{i}')
+            tendon.wrap_site(f'proximal_anchor_{i}')
             slider = cdpr_spec.worldbody.add_body(
                 pos=self.proximal_anchor_points[i],
             )
             slider.add_geom(
                 type=mj.mjtGeom.mjGEOM_SPHERE,
-                size=[0.2, 1, 1],
+                size=[0.01, 1, 1],
                 rgba=[0.0, 0.9, 0.0, 1],
                 mass=self.end_effector_mass/2,
                 contype=0,
@@ -150,7 +152,7 @@ class CDPR_Base:
             slider_site=slider.add_site(
                 name=f'slider_site_{i}',
                 pos=[0, 0, 0],
-                size=[0.1, 0.1, 0.1],
+                size=[0.01, 0.01, 0.01],
                 rgba=[0.9, 0, 0, 1],
             )
             tendon.wrap_site(slider_site.name)

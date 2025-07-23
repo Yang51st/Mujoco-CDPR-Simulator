@@ -2,7 +2,7 @@ from cdpr_base import *
 
 class CableDrivenParallelRobot(CDPR_Base):
 
-    def __init__(self, machine_frame_lwh=[15.40, 10.32, 17.80], end_effector_lwh=[1.24*np.sqrt(2), 1.24*np.sqrt(2), 0.85], end_effector_mass=1, proportionality_constant=50, control_margin=30, cable_length_limit=40, p_constant=0.05, i_constant=0.001, d_constant=0.01):
+    def __init__(self, machine_frame_lwh=[2.01, 2.02, 2.03], end_effector_lwh=[0.16, 0.161, 0.162], end_effector_mass=2, proportionality_constant=500, control_margin=30, cable_length_limit=5, p_constant=0.05, i_constant=0.001, d_constant=0.01):
         super().__init__(machine_frame_lwh, end_effector_lwh, end_effector_mass, proportionality_constant, control_margin, cable_length_limit)
         self.calculated_cable_tensions=[[] for _ in range(self.num_cables)]
         self.p_constant=p_constant
