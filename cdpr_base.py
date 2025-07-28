@@ -68,12 +68,12 @@ class CDPR_Base:
                                     pos=[0, -self.machine_frame_width*1.75, self.machine_frame_height*1.75],
                                     xyaxes=[1, 0, 0, 0, 1, 1],
                                     )
-        cdpr_spec.worldbody.add_camera(name="side_camera",
-                                    pos=[2*self.machine_frame_length, 0, self.machine_frame_height/2],
-                                    xyaxes=[0, 1, 0, 0, 0, 1],
+        cdpr_spec.worldbody.add_camera(name="left_camera",
+                                    pos=[-self.machine_frame_length/2, 0, 2.3*self.machine_frame_height],
+                                    xyaxes=[1, 0, 0, 0, 1, 0],
                                     )
-        cdpr_spec.worldbody.add_camera(name="top_camera",
-                                    pos=[0, 0, 2*self.machine_frame_height],
+        cdpr_spec.worldbody.add_camera(name="right_camera",
+                                    pos=[self.machine_frame_length/2, 0, 2.3*self.machine_frame_height],
                                     xyaxes=[1, 0, 0, 0, 1, 0],
                                     )
 
@@ -89,7 +89,7 @@ class CDPR_Base:
                 name=f"proximal_anchor_{anchor_ind}",
                 pos=anchor_coord,
                 size=[0.01, 0.01, 0.01],
-                rgba=[1, 0, 0, 1],
+                rgba=[1, 1, 1, 1],
             )
 
         end_effector = cdpr_spec.worldbody.add_body(
@@ -99,8 +99,44 @@ class CDPR_Base:
         end_effector.add_geom(
             type=mj.mjtGeom.mjGEOM_BOX,
             size=[self.end_effector_length/2, self.end_effector_width/2, self.end_effector_height/2],
-            rgba=[0, 0.9, 0, 1],
+            rgba=[0.9, 0.9, 0.9, 1],
             mass=self.end_effector_mass, #If this value is too high, the cables will not be able to move the end effector. Also, mass and density are different!
+        )
+        ee_marker1=end_effector.add_body(
+            name="end_effector_marker1",
+            pos=[0, 0, self.end_effector_height/2],
+        )
+        ee_marker1.add_geom(
+            type=mj.mjtGeom.mjGEOM_SPHERE,
+            size=[0.03, 1, 1],
+            rgba=[0, 1, 0, 1],
+            mass=0,
+            contype=0,
+            conaffinity=0,
+        )
+        ee_marker2=end_effector.add_body(
+            name="end_effector_marker2",
+            pos=[self.end_effector_length/2, 0, self.end_effector_height/2],
+        )
+        ee_marker2.add_geom(
+            type=mj.mjtGeom.mjGEOM_SPHERE,
+            size=[0.03, 1, 1],
+            rgba=[0, 1, 0, 1],
+            mass=0,
+            contype=0,
+            conaffinity=0,
+        )
+        ee_marker3=end_effector.add_body(
+            name="end_effector_marker3",
+            pos=[0, self.end_effector_width/2, self.end_effector_height/2],
+        )
+        ee_marker3.add_geom(
+            type=mj.mjtGeom.mjGEOM_SPHERE,
+            size=[0.03, 1, 1],
+            rgba=[0, 1, 0, 1],
+            mass=0,
+            contype=0,
+            conaffinity=0,
         )
         end_effector.add_joint(
             type=mj.mjtJoint.mjJNT_FREE,
@@ -115,7 +151,7 @@ class CDPR_Base:
                 name=f"distal_anchor_{anchor_ind}",
                 pos=anchor_coord,
                 size=[0.01, 0.01, 0.01],
-                rgba=[1, 0, 0, 1],
+                rgba=[1, 1, 1, 1],
             )
 
         for i in range(len(self.proximal_anchor_points)):
@@ -125,7 +161,7 @@ class CDPR_Base:
                 damping=0, #Higher this value is, the more resistant to movement the cable will be, so lower is more cablistic.
                 range=[0, self.cable_length_limit], #Limits on the length of the tendon, still exerts force within this range.
                 width=0.005, #Width has no effect on the amount of force the tendon can exert, for visualization only.
-                rgba=[0, 0, 0.9, 1],
+                rgba=[0, 0, 0, 1],
                 stiffness=0,
                 springlength=[0, self.cable_length_limit],
                 frictionloss=0.1,
@@ -138,7 +174,7 @@ class CDPR_Base:
             slider.add_geom(
                 type=mj.mjtGeom.mjGEOM_SPHERE,
                 size=[0.01, 1, 1],
-                rgba=[0.0, 0.9, 0.0, 1],
+                rgba=[1, 1, 1, 1],
                 mass=self.end_effector_mass/2,
                 contype=0,
                 conaffinity=0,
@@ -153,7 +189,7 @@ class CDPR_Base:
                 name=f'slider_site_{i}',
                 pos=[0, 0, 0],
                 size=[0.01, 0.01, 0.01],
-                rgba=[0.9, 0, 0, 1],
+                rgba=[1, 1, 1, 1],
             )
             tendon.wrap_site(slider_site.name)
             tendon_actuator=cdpr_spec.add_actuator(
