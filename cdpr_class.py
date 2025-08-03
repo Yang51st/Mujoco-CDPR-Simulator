@@ -71,6 +71,13 @@ class CableDrivenParallelRobot(CDPR_Base):
         self.cumulative_errors += cable_errors
 
         return self.cable_length_limit*np.ones(self.num_cables) + p_control + i_control + d_control - np.linalg.norm(desired_cable_vectors, axis=1)
+    
+    def no_joint_position_control(self, target_xyz, target_orientation):
+        rotation = R.from_rotvec(target_orientation, degrees=True)
+        desired_cable_vectors = self.inverse_kinematics(target_xyz, rotation)
+        desired_cable_lengths = np.linalg.norm(desired_cable_vectors, axis=1)
+
+        return self.cable_length_limit*np.ones(self.num_cables) - desired_cable_lengths
 
     def inverse_kinematics(self, target_xyz, rotation):
         desired_cable_vectors = np.zeros((self.num_cables, 3))
