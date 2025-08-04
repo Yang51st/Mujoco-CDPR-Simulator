@@ -71,7 +71,23 @@ class CableDrivenParallelRobot(CDPR_Base):
         self.cumulative_errors += cable_errors
 
         return self.cable_length_limit*np.ones(self.num_cables) + p_control + i_control + d_control - np.linalg.norm(desired_cable_vectors, axis=1)
-    
+
+    def sv_joint_position_control(self, target_xyz, target_orientation, sv_pos):
+        rotation = R.from_rotvec(target_orientation, degrees=True)
+        desired_cable_vectors = self.inverse_kinematics(target_xyz, rotation)
+        desired_cable_lengths = np.linalg.norm(desired_cable_vectors, axis=1)
+
+        # Use the SSVSPD position for control
+        if sv_pos is not None:
+            current_error=np.linalg.norm(sv_pos[:3] - target_xyz)
+            sv_p = 5 * self.p_constant * current_error
+            sv_d = 5 * self.d_constant * (current_error - self.previous_errors)
+            self.previous_errors = current_error
+
+            return self.cable_length_limit*np.ones(self.num_cables) - desired_cable_lengths + sv_p + sv_d
+
+        return self.cable_length_limit*np.ones(self.num_cables) - desired_cable_lengths
+
     def no_joint_position_control(self, target_xyz, target_orientation):
         rotation = R.from_rotvec(target_orientation, degrees=True)
         desired_cable_vectors = self.inverse_kinematics(target_xyz, rotation)
@@ -201,7 +217,7 @@ class CableDrivenParallelRobot(CDPR_Base):
                 total_error += np.square((np.square(cable_length) - np.square(cable_lengths[cable_index])))
             return total_error
         
-        result = least_squares(to_be_minimized, initial_guess, bounds=(lower_corner, upper_corner), method='trf', max_nfev=10000)
+        result = least_squares(to_be_minimized, initial_guess, bounds=(lower_corner, upper_corner), method='dogbox', max_nfev=1000)
         if result.success:
             return result.x
         else:
