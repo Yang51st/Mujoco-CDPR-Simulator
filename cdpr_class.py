@@ -2,7 +2,7 @@ from cdpr_base import *
 
 class CableDrivenParallelRobot(CDPR_Base):
 
-    def __init__(self, machine_frame_lwh=[2.01, 2.02, 2.03], end_effector_lwh=[0.16, 0.161, 0.162], end_effector_mass=2, proportionality_constant=500, control_margin=30, cable_length_limit=5, p_constant=0.05, i_constant=0.001, d_constant=0.01):
+    def __init__(self, machine_frame_lwh=[2.01, 2.02, 2.03], end_effector_lwh=[0.16, 0.161, 0.162], end_effector_mass=2, proportionality_constant=500, control_margin=30, cable_length_limit=5, p_constant=0.5, i_constant=0.001, d_constant=0.05):
         super().__init__(machine_frame_lwh, end_effector_lwh, end_effector_mass, proportionality_constant, control_margin, cable_length_limit)
         self.calculated_cable_tensions=[[] for _ in range(self.num_cables)]
         self.p_constant=p_constant
@@ -80,11 +80,17 @@ class CableDrivenParallelRobot(CDPR_Base):
         # Use the SSVSPD position for control
         if sv_pos is not None:
             current_error=np.linalg.norm(sv_pos[:3] - target_xyz)
-            sv_p = 5 * self.p_constant * current_error
-            sv_d = 5 * self.d_constant * (current_error - self.previous_errors)
+            sv_p = self.p_constant * current_error
+            if self.first_pid_run:
+                self.previous_errors = current_error
+                self.cumulative_errors = np.zeros(self.num_cables)
+                self.first_pid_run = False
+            sv_i = self.i_constant * (self.cumulative_errors + current_error)
+            sv_d = self.d_constant * (current_error - self.previous_errors)
             self.previous_errors = current_error
+            self.cumulative_errors += current_error
 
-            return self.cable_length_limit*np.ones(self.num_cables) - desired_cable_lengths + sv_p + sv_d
+            return self.cable_length_limit*np.ones(self.num_cables) - desired_cable_lengths + sv_p + sv_i + sv_d
 
         return self.cable_length_limit*np.ones(self.num_cables) - desired_cable_lengths
 
